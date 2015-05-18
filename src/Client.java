@@ -4,14 +4,20 @@
 public class Client {
 
     private String ip;
+    private String lookupName;
 
 
-    public Client(String ip) {
+    public Client(String ip, String lookupName) {
+
         this.ip = ip;
+        this.lookupName = lookupName;
     }
 
     public String getIp(){
         return this.ip;
+    }
+    public String getLookupName(){
+        return this.lookupName;
     }
 
 

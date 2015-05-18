@@ -7,7 +7,7 @@ import java.rmi.registry.LocateRegistry;
 public class Main {
 
 
-    private static String masterIP = "127.0.0.1";
+    private static String masterIP = "192.168.1.3";
 
 
     public static void main(String[] args){

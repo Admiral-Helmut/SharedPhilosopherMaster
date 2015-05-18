@@ -16,6 +16,7 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
 
     private ArrayList<Client> clientList;
     private HashMap<String, ClientRemote> clientRemoteMap;
+    private HashMap<String, String> lookupNames;
 
     protected MasterServiceImpl() throws RemoteException {
         clientList = new ArrayList<Client>();
@@ -23,11 +24,11 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
     }
 
     @Override
-    public boolean register(String ip) throws RemoteException {
+    public boolean register(String ip, String lookup) throws RemoteException {
 
         System.out.println("# Neuer Client unter IP "+ip+" versucht sich zu registrieren!");
 
-        Client newClient = new Client(ip);
+        Client newClient = new Client(ip, lookup);
         for(Client client : clientList){
             if(client.equals(newClient)){
                 return false;
@@ -36,14 +37,20 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
         clientList.add(newClient);
         ClientRemote newClientRemote = null;
         try {
-            newClientRemote = (ClientRemote) Naming.lookup("rmi://"+newClient.getIp()+"/ClientRemote");
+            System.out.println("Suche CLient");
+            System.setProperty("java.rmi.server.hostname", "192.168.1.3");
+            System.out.println(newClient.getIp());
+            newClientRemote = (ClientRemote) Naming.lookup("rmi://"+newClient.getIp()+"/"+newClient.getLookupName());
+
+            System.out.println("Client gefunden");
         } catch (NotBoundException e) {
             e.printStackTrace();
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         clientRemoteMap.put(newClient.getIp(), newClientRemote);
+        lookupNames.put(newClient.getIp(), newClient.getLookupName());
 
         boolean connectionToNewClient = checkClient(clientRemoteMap.get(newClient.getIp()), newClient.getIp());
         if(!connectionToNewClient){
@@ -63,7 +70,7 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
         // Registriere neuen Client bei allen anderen Clients als Nachbar
         for(Map.Entry<String, ClientRemote> e : clientRemoteMap.entrySet()) {
             if(e.getKey()!=ip){
-                e.getValue().setNeighbour(ip);
+                e.getValue().setNeighbour(ip,lookup);
             }
         }
 
@@ -71,10 +78,9 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
         for(Map.Entry<String, ClientRemote> e : clientRemoteMap.entrySet()) {
             //TODO
             if(e.getKey()!=ip){
-                clientRemoteMap.get(ip).setNeighbour(e.getKey());
+                clientRemoteMap.get(ip).setNeighbour(e.getKey(),lookupNames.get(e.getKey()));
             }
         }
-
 
         return connectionToNewClient;
     }

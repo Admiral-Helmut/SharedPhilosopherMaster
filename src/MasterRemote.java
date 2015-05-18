@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 public interface MasterRemote extends Remote {
 
 
-    public boolean register(String ip) throws RemoteException;
+    public boolean register(String ip, String lookup) throws RemoteException;
 
 
 
