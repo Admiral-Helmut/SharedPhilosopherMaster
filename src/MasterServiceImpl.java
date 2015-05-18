@@ -81,10 +81,23 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
                 clientRemoteMap.get(ip).setNeighbour(e.getKey(),lookupNames.get(e.getKey()));
             }
         }
+        synchronized (Main.getMonitor()){
+            Main.getMonitor().notify();
+        }
 
         return connectionToNewClient;
     }
 
+    public int getClientListSize(){
+        return clientList.size();
+    }
+
+    public  HashMap<String, ClientRemote> getRemoteMap(){
+        return clientRemoteMap;
+    }
+    public  ArrayList<Client> getClientList(){
+        return clientList;
+    }
     private boolean checkClient(ClientRemote clientRemote, String ip){
 
         System.out.println("# Prüfe Client unter IP "+ip+"!");
