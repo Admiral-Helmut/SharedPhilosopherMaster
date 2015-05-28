@@ -82,7 +82,7 @@ public class Main {
             Client leftClient = clientList.get((i-1+clientList.size())%clientList.size());
 
             try {
-                masterService.getRemoteMap().get(client.getLookupName()).initClient(seats[remoteMapCounter], seatAmount, philosophers[remoteMapCounter], philosopherAmount, hungryPhilosophers[remoteMapCounter], hungryPhilosopherAmount, philosopherOffset, hungryPhilosopherOffset, eatTime, meditationTime, sleepTime, runTimeInSeconds ,leftClient.getIp(), leftClient.getLookupName(), rightClient.getIp(), rightClient.getLookupName());
+                masterService.getRemoteMap().get(client.getLookupName()).initClient(seats[remoteMapCounter], seatAmount, philosophers[remoteMapCounter], philosopherAmount, hungryPhilosophers[remoteMapCounter], hungryPhilosopherAmount, philosopherOffset, hungryPhilosopherOffset, eatTime, meditationTime, sleepTime, runTimeInSeconds ,leftClient.getIp(), leftClient.getLookupName(), rightClient.getIp(), rightClient.getLookupName(), debugging);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
