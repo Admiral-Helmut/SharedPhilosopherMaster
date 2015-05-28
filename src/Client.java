@@ -20,7 +20,6 @@ public class Client {
         return this.lookupName;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -28,13 +27,15 @@ public class Client {
 
         Client client = (Client) o;
 
-        if (ip != null ? !ip.equals(client.ip) : client.ip != null) return false;
+        if (!ip.equals(client.ip)) return false;
+        return lookupName.equals(client.lookupName);
 
-        return true;
     }
 
     @Override
     public int hashCode() {
-        return ip != null ? ip.hashCode() : 0;
+        int result = ip.hashCode();
+        result = 31 * result + lookupName.hashCode();
+        return result;
     }
 }

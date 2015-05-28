@@ -16,7 +16,7 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
 
     private ArrayList<Client> clientList;
     private HashMap<String, ClientRemote> clientRemoteMap;
-    private HashMap<String, String> lookupNames;
+    private HashMap<String, String> ipList;
 
     protected MasterServiceImpl() throws RemoteException {
         clientList = new ArrayList<Client>();
@@ -49,13 +49,13 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
             e.printStackTrace();
         }
 
-        clientRemoteMap.put(newClient.getIp(), newClientRemote);
-        lookupNames.put(newClient.getIp(), newClient.getLookupName());
+        clientRemoteMap.put(newClient.getLookupName(), newClientRemote);
+        ipList.put(newClient.getLookupName(), newClient.getIp());
 
-        boolean connectionToNewClient = checkClient(clientRemoteMap.get(newClient.getIp()), newClient.getIp());
+        boolean connectionToNewClient = checkClient(clientRemoteMap.get(newClient.getLookupName()), newClient.getIp());
         if(!connectionToNewClient){
             clientList.remove(newClient);
-            clientRemoteMap.remove(newClient.getIp());
+            clientRemoteMap.remove(newClient.getLookupName());
         }
         System.out.println("");
         System.out.println("#######################");
@@ -69,7 +69,7 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
 
         // Registriere neuen Client bei allen anderen Clients als Nachbar
         for(Map.Entry<String, ClientRemote> e : clientRemoteMap.entrySet()) {
-            if(e.getKey()!=ip){
+            if(e.getKey()!=lookup){
                 e.getValue().setNeighbour(ip,lookup);
             }
         }
@@ -77,8 +77,8 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
         // Registriere alle alten Clients beim neuen Client als Nachbarn
         for(Map.Entry<String, ClientRemote> e : clientRemoteMap.entrySet()) {
             //TODO
-            if(e.getKey()!=ip){
-                clientRemoteMap.get(ip).setNeighbour(e.getKey(),lookupNames.get(e.getKey()));
+            if(e.getKey()!=lookup){
+                clientRemoteMap.get(lookup).setNeighbour(ipList.get(e.getValue()),e.getKey());
             }
         }
         synchronized (Main.getMonitor()){
