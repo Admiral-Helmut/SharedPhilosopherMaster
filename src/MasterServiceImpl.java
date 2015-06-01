@@ -38,7 +38,7 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
         ClientRemote newClientRemote = null;
         try {
             System.out.println("Suche CLient");
-            System.setProperty("java.rmi.server.hostname", "192.168.1.3");
+            //System.setProperty("java.rmi.server.hostname", "192.168.1.3");
             System.out.println(newClient.getIp());
             newClientRemote = (ClientRemote) Naming.lookup("rmi://"+newClient.getIp()+"/"+newClient.getLookupName());
 
