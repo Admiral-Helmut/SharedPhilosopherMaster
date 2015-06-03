@@ -21,6 +21,7 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
     protected MasterServiceImpl() throws RemoteException {
         clientList = new ArrayList<Client>();
         clientRemoteMap = new HashMap<String, ClientRemote>();
+        ipList = new HashMap<String, String>();
     }
 
     @Override
@@ -67,20 +68,23 @@ public class MasterServiceImpl extends UnicastRemoteObject implements MasterRemo
             mapCounter++;
         }
 
+        System.out.println("Registriere neuen Client bei allen anderen Clients als Nachbar");
         // Registriere neuen Client bei allen anderen Clients als Nachbar
         for(Map.Entry<String, ClientRemote> e : clientRemoteMap.entrySet()) {
-            if(e.getKey()!=lookup){
+            if(!e.getKey().equals(lookup)){
                 e.getValue().setNeighbour(ip,lookup);
             }
         }
 
         // Registriere alle alten Clients beim neuen Client als Nachbarn
+        System.out.println("Registriere alle alten Clients beim neuen Client als Nachbarn");
         for(Map.Entry<String, ClientRemote> e : clientRemoteMap.entrySet()) {
-            //TODO
-            if(e.getKey()!=lookup){
-                clientRemoteMap.get(lookup).setNeighbour(ipList.get(e.getValue()),e.getKey());
+
+            if(!e.getKey().equals(lookup)){
+                clientRemoteMap.get(lookup).setNeighbour(ipList.get(e.getKey()),e.getKey());
             }
         }
+        System.out.println("Registriere alle alten Clients beim neuen Client als Nachbarn FERTIG");
         synchronized (Main.getMonitor()){
             Main.getMonitor().notify();
         }

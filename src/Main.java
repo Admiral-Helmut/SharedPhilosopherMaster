@@ -10,7 +10,7 @@ import java.util.Map;
 public class Main {
 
 
-    private static String masterIP = "127.0.0.1";
+    private static String masterIP = "192.168.178.3";
     private static final int clientAmount = 2;
     private static Object monitor = new Object();
 
