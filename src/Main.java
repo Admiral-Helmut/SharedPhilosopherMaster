@@ -18,12 +18,12 @@ public class Main {
     public static final int eatTime = 1;
     public static final int meditationTime = 5;
     public static final int sleepTime = 10;
-    public static final int philosopherAmount = 100;
+    public static final int philosopherAmount = 10;
     public static final int hungryPhilosopherAmount = 5;
-    public static final int runTimeInSeconds = 100;
+    public static final int runTimeInSeconds = 30;
     public static final int seatAmount = 4;
     public static long endTime;
-    public static boolean debugging = true;
+    public static boolean debugging = false;
 
 
     public static void main(String[] args) {
