@@ -18,10 +18,10 @@ public class Main {
     public static final int eatTime = 1;
     public static final int meditationTime = 5;
     public static final int sleepTime = 10;
-    public static final int philosopherAmount = 4;
-    public static final int hungryPhilosopherAmount = 2;
+    public static final int philosopherAmount = 100;
+    public static final int hungryPhilosopherAmount = 5;
     public static final int runTimeInSeconds = 100;
-    public static final int seatAmount = 10;
+    public static final int seatAmount = 4;
     public static long endTime;
     public static boolean debugging = true;
 
@@ -76,13 +76,15 @@ public class Main {
         int philosopherOffset = 1;
         int hungryPhilosopherOffset = 1;
 
+        long startTime = System.currentTimeMillis()+3000;
+
         for(int i = 0; i<masterService.getClientListSize();i++){
             Client client = clientList.get(i);
             Client rightClient = clientList.get((i+1)%clientList.size());
             Client leftClient = clientList.get((i-1+clientList.size())%clientList.size());
 
             try {
-                masterService.getRemoteMap().get(client.getLookupName()).initClient(seats[remoteMapCounter], seatAmount, philosophers[remoteMapCounter], philosopherAmount, hungryPhilosophers[remoteMapCounter], hungryPhilosopherAmount, philosopherOffset, hungryPhilosopherOffset, eatTime, meditationTime, sleepTime, runTimeInSeconds ,leftClient.getIp(), leftClient.getLookupName(), rightClient.getIp(), rightClient.getLookupName(), debugging);
+                masterService.getRemoteMap().get(client.getLookupName()).initClient(seats[remoteMapCounter], seatAmount, philosophers[remoteMapCounter], philosopherAmount, hungryPhilosophers[remoteMapCounter], hungryPhilosopherAmount, philosopherOffset, hungryPhilosopherOffset, eatTime, meditationTime, sleepTime, runTimeInSeconds ,leftClient.getIp(), leftClient.getLookupName(), rightClient.getIp(), rightClient.getLookupName(), debugging, startTime);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
