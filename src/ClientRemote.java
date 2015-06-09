@@ -26,5 +26,15 @@ public interface ClientRemote extends Remote {
     void lastForkWait() throws RemoteException;
 
     void releaseLastFork() throws RemoteException;
+
+    void addSeats(int diff) throws RemoteException;
+
+    void removeSeats(int diff) throws RemoteException;
+
+    void addPhilosophers(int newPhilosopherForCurrentClient, int newHungryPhilosopherForCurrentClient,
+                         int amountNewPhilosophers, int amountNewHungryPhilosophers) throws RemoteException;
+
+    void removePhilosophers(int removePhilosopherForCurrentClient, int removeHungryPhilosopherForCurrentClient,
+                            int amountRemovePhilosophers, int amountRemoveHungryPhilosophers) throws RemoteException;
 }
 
