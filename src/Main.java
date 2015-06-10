@@ -19,9 +19,9 @@ public class Main {
     public static final int eatTime = 1;
     public static final int meditationTime = 5;
     public static final int sleepTime = 10;
-    public static final int philosopherAmount = 10;
+    public static final int philosopherAmount = 30;
     public static final int hungryPhilosopherAmount = 5;
-    public static final int runTimeInSeconds = 30;
+    public static final int runTimeInSeconds = 60;
     public static final int seatAmount = 4;
     public static long endTime;
     public static boolean debugging = false;
@@ -81,7 +81,7 @@ public class Main {
         int philosopherOffset = 1;
         int hungryPhilosopherOffset = 1;
 
-        long startTime = System.currentTimeMillis()+3000;
+        long startTime = System.currentTimeMillis()+1000;
 
         for(int i = 0; i<masterService.getClientListSize();i++){
             Client client = clientList.get(i);
@@ -101,24 +101,22 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         while(true) {
-            System.out.println("Um Philosophen hinzuzufügen: PA:x,y eingeben, wobei x der Anzahl normaler, und y, der Anzahl hungriger Philosophen entsprich.");
+            System.out.println("Um Philosophen hinzuzufï¿½gen: PA:x,y eingeben, wobei x der Anzahl normaler, und y, der Anzahl hungriger Philosophen entsprich.");
             System.out.println("PD:x,y entfernt Philosophen, wobei x der Anzahl der normalen und y der Anzahl der hungrigen Philosophen entsprich.");
-            System.out.println("SA:x fügt x Plätze hinzu, SD:x entfernt x Sitze");
+            System.out.println("SA:x fï¿½gt x Plï¿½tze hinzu, SD:x entfernt x Sitze");
             String request = scanner.nextLine();
             String type = request.split(":")[0];
-            switch (type) {
-                case "PA":
-                    addPhilosophers(request.split(":")[1]);
-                    break;
-                case "PD":
-                    removePhilosophers(request.split(":")[1]);
-                    break;
-                case "SA":
-                    addSeats(request.split(":")[1]);
-                    break;
-                case "SD":
-                    removeSeats(request.split(":")[1]);
-                    break;
+            if("PA".equals(type)){
+                addPhilosophers(request.split(":")[1]);
+            }
+            else if("PD".equals(type)){
+                removePhilosophers(request.split(":")[1]);
+            }
+            else if("SA".equals(type)){
+                addSeats(request.split(":")[1]);
+            }
+            else if("SD".equals(type)){
+                removeSeats(request.split(":")[1]);
             }
         }
     }
