@@ -74,7 +74,6 @@ public class Main {
         seats = getResultPerClient(seatAmount);
         philosophers = getResultPerClient(philosopherAmount);
         hungryPhilosophers = getResultPerClient(hungryPhilosopherAmount);
-        int remoteMapCounter = 0;
 
 
         clientList = masterService.getClientList();
@@ -89,7 +88,7 @@ public class Main {
             Client leftClient = clientList.get((i-1+clientList.size())%clientList.size());
 
             try {
-                masterService.getRemoteMap().get(client.getLookupName()).initClient(seats[remoteMapCounter], seatAmount, philosophers[remoteMapCounter], philosopherAmount, hungryPhilosophers[remoteMapCounter], hungryPhilosopherAmount, philosopherOffset, hungryPhilosopherOffset, eatTime, meditationTime, sleepTime, runTimeInSeconds ,leftClient.getIp(), leftClient.getLookupName(), rightClient.getIp(), rightClient.getLookupName(), debugging, startTime);
+                masterService.getRemoteMap().get(client.getLookupName()).initClient(seats[i], seatAmount, philosophers[i], philosopherAmount, hungryPhilosophers[i], hungryPhilosopherAmount, philosopherOffset, hungryPhilosopherOffset, eatTime, meditationTime, sleepTime, runTimeInSeconds ,leftClient.getIp(), leftClient.getLookupName(), rightClient.getIp(), rightClient.getLookupName(), debugging, startTime);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
