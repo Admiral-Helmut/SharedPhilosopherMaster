@@ -198,10 +198,12 @@ public class Main {
             int diff = newSeats[i] - seats[i];
             try {
                 masterService.getRemoteMap().get(clientList.get(i).getLookupName()).addSeats(diff, newAmount);
+                System.out.println("Client "+clientList.get(i).getLookupName()+" kriegt "+diff+" Seats");
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
+        seats = newSeats;
 
         System.out.println("Added seat " + amountSeats );
         System.out.println("Now "+seatAmount + " Seats");
@@ -218,11 +220,13 @@ public class Main {
             if(diff > 0){
                 try {
                     masterService.getRemoteMap().get(clientList.get(i).getLookupName()).removeSeats(diff, newAmount);
+                    System.out.println("Client "+clientList.get(i).getLookupName()+" verliert "+diff+" Seats");
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
             }
         }
+        seats=newSeats;
 
         System.out.println("Removed " + amountSeats  + " seats");
         System.out.println("Now "+seatAmount + " Seats");
