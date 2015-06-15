@@ -19,10 +19,10 @@ public class Main {
     public static final int eatTime = 1;
     public static final int meditationTime = 5;
     public static final int sleepTime = 10;
-    public static final int philosopherAmount = 30;
-    public static final int hungryPhilosopherAmount = 5;
-    public static final int runTimeInSeconds = 60;
-    public static final int seatAmount = 4;
+    public static  int philosopherAmount = 30;
+    public static  int hungryPhilosopherAmount = 20;
+    public static final int runTimeInSeconds = 62;
+    public static  int seatAmount = 5;
     public static long endTime;
     public static boolean debugging = false;
     private static int[] seats;
@@ -143,6 +143,9 @@ public class Main {
         int newHungryPhilosopherAmount =  hungryPhilosopherAmount - amountHungryPhilosophers;
         int newPhilosopherAmount =  philosopherAmount - amountNormalPhilosophers;
 
+        hungryPhilosopherAmount = newHungryPhilosopherAmount;
+        philosopherAmount = newPhilosopherAmount;
+
         int[] newHungryPhilosopher = getResultPerClient(newHungryPhilosopherAmount);
         int[] newPhilosopher = getResultPerClient(newPhilosopherAmount);
 
@@ -166,31 +169,22 @@ public class Main {
         int newHungryPhilosopherAmount = amountHungryPhilosophers + hungryPhilosopherAmount;
         int newPhilosopherAmount = amountNormalPhilosophers + philosopherAmount;
 
-        for(int i = 0; i < newPhilosopherAmount; i++){
+        hungryPhilosopherAmount = newHungryPhilosopherAmount;
+        philosopherAmount = newPhilosopherAmount;
+
+        int[] newHungryPhilosopher = getResultPerClient(newHungryPhilosopherAmount);
+        int[] newPhilosopher = getResultPerClient(newPhilosopherAmount);
+
+        for(int i = 0; i < philosophers.length; i++){
+            int diffHungry = newHungryPhilosopher[i] - hungryPhilosophers[i];
+            int diff = newPhilosopher[i] - philosophers[i];
             try {
-                masterService.getRemoteMap().get(masterService.getClientList().get(i%masterService.getClientListSize()).getLookupName()).addPhilosopher(false, true);
-                for(int j = 0; j < masterService.getRemoteMap().size(); j++){
-                    if(j != i){
-                        masterService.getRemoteMap().get(masterService.getClientList().get(j).getLookupName()).addPhilosopher(false, false);
-                    }
-                }
+                masterService.getRemoteMap().get(clientList.get(i).getLookupName()).addPhilosophers(diff, diffHungry, newPhilosopherAmount, newHungryPhilosopherAmount);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
 
-        for(int i = 0; i < newHungryPhilosopherAmount; i++){
-            try {
-                masterService.getRemoteMap().get(masterService.getClientList().get(i%masterService.getClientListSize()).getLookupName()).addPhilosopher(true, true);
-                for(int j = 0; j < masterService.getRemoteMap().size(); j++){
-                    if(j != i){
-                        masterService.getRemoteMap().get(masterService.getClientList().get(j).getLookupName()).addPhilosopher(true, false);
-                    }
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
         System.out.println("Add philosopher " + amountNormalPhilosophers + "+" + amountHungryPhilosophers );
     }
 
@@ -198,35 +192,43 @@ public class Main {
         int amountSeats = Integer.valueOf(seat);
 
         int newAmount = seatAmount + amountSeats;
+        seatAmount = newAmount;
         int[] newSeats = getResultPerClient(newAmount);
         for(int i = 0; i < seats.length; i++){
             int diff = newSeats[i] - seats[i];
             try {
                 masterService.getRemoteMap().get(clientList.get(i).getLookupName()).addSeats(diff, newAmount);
+                System.out.println("Client "+clientList.get(i).getLookupName()+" kriegt "+diff+" Seats");
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
+        seats = newSeats;
 
-        System.out.println("Add seat " + amountSeats );
+        System.out.println("Added seat " + amountSeats );
+        System.out.println("Now "+seatAmount + " Seats");
     }
 
     private static void removeSeats(String seat) {
         int amountSeats = Integer.valueOf(seat);
 
         int newAmount = seatAmount - amountSeats;
+        seatAmount = newAmount;
         int[] newSeats = getResultPerClient(newAmount);
         for(int i = 0; i < seats.length; i++){
             int diff = seats[i] - newSeats[i];
             if(diff > 0){
                 try {
                     masterService.getRemoteMap().get(clientList.get(i).getLookupName()).removeSeats(diff, newAmount);
+                    System.out.println("Client "+clientList.get(i).getLookupName()+" verliert "+diff+" Seats");
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
             }
         }
+        seats=newSeats;
 
         System.out.println("Removed " + amountSeats  + " seats");
+        System.out.println("Now "+seatAmount + " Seats");
     }
 }
