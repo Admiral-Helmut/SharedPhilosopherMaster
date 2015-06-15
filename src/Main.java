@@ -203,7 +203,8 @@ public class Main {
             }
         }
 
-        System.out.println("Add seat " + amountSeats );
+        System.out.println("Added seat " + amountSeats );
+        System.out.println("Now "+seatAmount + " Seats");
     }
 
     private static void removeSeats(String seat) {
@@ -224,5 +225,6 @@ public class Main {
         }
 
         System.out.println("Removed " + amountSeats  + " seats");
+        System.out.println("Now "+seatAmount + " Seats");
     }
 }
