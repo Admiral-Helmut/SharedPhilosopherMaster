@@ -167,15 +167,19 @@ public class Main {
         int amountNormalPhilosophers = Integer.valueOf(philosopher.split(",")[0]);
         int amountHungryPhilosophers = Integer.valueOf(philosopher.split(",")[1]);
 
-        int newHungryPhilosopherAmount = amountHungryPhilosophers + hungryPhilosopherAmount;
-        int newPhilosopherAmount = amountNormalPhilosophers + philosopherAmount;
+        hungryPhilosopherAmount = amountHungryPhilosophers + hungryPhilosopherAmount;
+        philosopherAmount = amountNormalPhilosophers + philosopherAmount;
 
-        for(int i = 0; i < newPhilosopherAmount; i++){
+        int addCounter = 0;
+
+        for(int i = 0; i < amountNormalPhilosophers; i++){
             try {
                 masterService.getRemoteMap().get(masterService.getClientList().get(i%masterService.getClientListSize()).getLookupName()).addPhilosopher(false, true);
+                addCounter++;
                 for(int j = 0; j < masterService.getRemoteMap().size(); j++){
                     if(j != i){
                         masterService.getRemoteMap().get(masterService.getClientList().get(j).getLookupName()).addPhilosopher(false, false);
+                        addCounter++;
                     }
                 }
             } catch (RemoteException e) {
@@ -183,19 +187,23 @@ public class Main {
             }
         }
 
-        for(int i = 0; i < newHungryPhilosopherAmount; i++){
+        for(int i = 0; i < amountHungryPhilosophers; i++){
             try {
                 masterService.getRemoteMap().get(masterService.getClientList().get(i%masterService.getClientListSize()).getLookupName()).addPhilosopher(true, true);
+                addCounter++;
                 for(int j = 0; j < masterService.getRemoteMap().size(); j++){
                     if(j != i){
                         masterService.getRemoteMap().get(masterService.getClientList().get(j).getLookupName()).addPhilosopher(true, false);
+                        addCounter++;
                     }
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
+
         System.out.println("Add philosopher " + amountNormalPhilosophers + "+" + amountHungryPhilosophers );
+        System.out.println("Tatsächlich "+addCounter+" Philosophen gestartet!");
     }
 
     private static void addSeats(String seat){
