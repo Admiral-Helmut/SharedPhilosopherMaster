@@ -2,6 +2,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -29,7 +30,8 @@ public class Main {
     private static int[] philosophers;
     private static int[] hungryPhilosophers;
     private static MasterServiceImpl masterService;
-    private static ArrayList<Client> clientList;
+    private static List<Client> clientList;
+    private static boolean[] philosopherTypes;
 
     public static void main(String[] args) {
 
@@ -96,7 +98,10 @@ public class Main {
             philosopherOffset += philosophers[i];
             hungryPhilosopherOffset += hungryPhilosophers[i];
         }
-
+        philosopherTypes = new boolean[philosopherAmount + hungryPhilosopherAmount];
+        for(int i = philosopherAmount; i < philosopherAmount + hungryPhilosopherAmount; i++){
+            philosopherTypes[i] = true;
+        }
 
         Scanner scanner = new Scanner(System.in);
         while(true) {
@@ -146,20 +151,50 @@ public class Main {
         hungryPhilosopherAmount = newHungryPhilosopherAmount;
         philosopherAmount = newPhilosopherAmount;
 
-        int[] newHungryPhilosopher = getResultPerClient(newHungryPhilosopherAmount);
-        int[] newPhilosopher = getResultPerClient(newPhilosopherAmount);
-
-        for(int i = 0; i < philosophers.length; i++){
-            int diffHungry =  hungryPhilosophers[i] - newHungryPhilosopher[i];
-            int diff =  philosophers[i] - newPhilosopher[i];
-            try {
-                masterService.getRemoteMap().get(clientList.get(i).getLookupName()).removePhilosophers(diff, diffHungry, newPhilosopherAmount, newHungryPhilosopherAmount);
-            } catch (RemoteException e) {
-                e.printStackTrace();
+        for(int i = 0; i < amountNormalPhilosophers; i++){
+            int index = getIndexForDelete(false);
+            for(int j = 0; j < masterService.getClientList().size(); j++){
+                try {
+                    masterService.getRemoteMap().get(masterService.getClientList().get(j).getLookupName()).removePhilosopher(index);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
+            updatePhilosopherTypes(index);
+        }
+
+        for(int i = 0; i < amountHungryPhilosophers; i++){
+            int index = getIndexForDelete(true);
+            for(int j = 0; j < masterService.getClientList().size(); j++){
+                try {
+                    masterService.getRemoteMap().get(masterService.getClientList().get(j).getLookupName()).removePhilosopher(index);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            updatePhilosopherTypes(index);
         }
 
         System.out.println("Remove philosopher " + amountNormalPhilosophers + "+" + amountHungryPhilosophers );
+    }
+
+    private static void updatePhilosopherTypes(int index) {
+        boolean[] newPhilosopherTypes = new boolean[philosopherTypes.length-1];
+        boolean found = false;
+        for(int i = 0; i < philosopherTypes.length; i++){
+            if(i == index)
+                found = true;
+            newPhilosopherTypes[i] = philosopherTypes[(found)?i+1:i];
+        }
+        philosopherTypes = newPhilosopherTypes;
+    }
+
+    private static int getIndexForDelete(boolean hungry){
+        for(int i = 0; i < philosopherTypes.length; i++){
+            if(philosopherTypes[i] == hungry)
+                return i;
+        }
+        return -1;
     }
 
     private static void addPhilosophers(String philosopher) {
@@ -170,12 +205,13 @@ public class Main {
         hungryPhilosopherAmount = amountHungryPhilosophers + hungryPhilosopherAmount;
         philosopherAmount = amountNormalPhilosophers + philosopherAmount;
 
-        int addCounter = 0;
+        boolean[] newPhilosopherTypes = new boolean[philosopherAmount + hungryPhilosopherAmount];
+        System.arraycopy(philosopherTypes, 0, newPhilosopherTypes, 0, philosopherTypes.length);
+        philosopherTypes = newPhilosopherTypes;
 
         for(int i = 0; i < amountNormalPhilosophers; i++){
             try {
                 masterService.getRemoteMap().get(masterService.getClientList().get(i%masterService.getClientListSize()).getLookupName()).addPhilosopher(false, true);
-                addCounter++;
                 for(int j = 0; j < masterService.getRemoteMap().size(); j++){
                     if(j != i%masterService.getClientListSize()){
                         masterService.getRemoteMap().get(masterService.getClientList().get(j).getLookupName()).addPhilosopher(false, false);
@@ -191,11 +227,9 @@ public class Main {
         for(int i = 0; i < amountHungryPhilosophers; i++){
             try {
                 masterService.getRemoteMap().get(masterService.getClientList().get(i%masterService.getClientListSize()).getLookupName()).addPhilosopher(true, true);
-                addCounter++;
                 for(int j = 0; j < masterService.getRemoteMap().size(); j++){
                     if(j != i%masterService.getClientListSize()){
                         masterService.getRemoteMap().get(masterService.getClientList().get(j).getLookupName()).addPhilosopher(true, false);
-                        System.out.println(i +"- "+j);
                     }
                 }
             } catch (RemoteException e) {
@@ -207,7 +241,6 @@ public class Main {
         System.out.println("CLientListSize: "+masterService.getRemoteMap().size());
 
         System.out.println("Add philosopher " + amountNormalPhilosophers + "+" + amountHungryPhilosophers );
-        System.out.println("Tatsächlich "+addCounter+" Philosophen gestartet!");
     }
 
     private static void addSeats(String seat){
@@ -220,7 +253,6 @@ public class Main {
             int diff = newSeats[i] - seats[i];
             try {
                 masterService.getRemoteMap().get(clientList.get(i).getLookupName()).addSeats(diff, newAmount);
-                System.out.println("Client "+clientList.get(i).getLookupName()+" kriegt "+diff+" Seats");
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -242,7 +274,6 @@ public class Main {
             if(diff > 0){
                 try {
                     masterService.getRemoteMap().get(clientList.get(i).getLookupName()).removeSeats(diff, newAmount);
-                    System.out.println("Client "+clientList.get(i).getLookupName()+" verliert "+diff+" Seats");
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
