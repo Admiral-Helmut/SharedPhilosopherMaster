@@ -163,28 +163,38 @@ public class Main {
     }
 
     private static void addPhilosophers(String philosopher) {
+
         int amountNormalPhilosophers = Integer.valueOf(philosopher.split(",")[0]);
         int amountHungryPhilosophers = Integer.valueOf(philosopher.split(",")[1]);
 
         int newHungryPhilosopherAmount = amountHungryPhilosophers + hungryPhilosopherAmount;
         int newPhilosopherAmount = amountNormalPhilosophers + philosopherAmount;
 
-        hungryPhilosopherAmount = newHungryPhilosopherAmount;
-        philosopherAmount = newPhilosopherAmount;
-
-        int[] newHungryPhilosopher = getResultPerClient(newHungryPhilosopherAmount);
-        int[] newPhilosopher = getResultPerClient(newPhilosopherAmount);
-
-        for(int i = 0; i < philosophers.length; i++){
-            int diffHungry = newHungryPhilosopher[i] - hungryPhilosophers[i];
-            int diff = newPhilosopher[i] - philosophers[i];
+        for(int i = 0; i < newPhilosopherAmount; i++){
             try {
-                masterService.getRemoteMap().get(clientList.get(i).getLookupName()).addPhilosophers(diff, diffHungry, newPhilosopherAmount, newHungryPhilosopherAmount);
+                masterService.getRemoteMap().get(masterService.getClientList().get(i%masterService.getClientListSize()).getLookupName()).addPhilosopher(false, true);
+                for(int j = 0; j < masterService.getRemoteMap().size(); j++){
+                    if(j != i){
+                        masterService.getRemoteMap().get(masterService.getClientList().get(j).getLookupName()).addPhilosopher(false, false);
+                    }
+                }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
 
+        for(int i = 0; i < newHungryPhilosopherAmount; i++){
+            try {
+                masterService.getRemoteMap().get(masterService.getClientList().get(i%masterService.getClientListSize()).getLookupName()).addPhilosopher(true, true);
+                for(int j = 0; j < masterService.getRemoteMap().size(); j++){
+                    if(j != i){
+                        masterService.getRemoteMap().get(masterService.getClientList().get(j).getLookupName()).addPhilosopher(true, false);
+                    }
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
         System.out.println("Add philosopher " + amountNormalPhilosophers + "+" + amountHungryPhilosophers );
     }
 
