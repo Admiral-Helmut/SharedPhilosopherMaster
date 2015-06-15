@@ -19,10 +19,10 @@ public class Main {
     public static final int eatTime = 1;
     public static final int meditationTime = 5;
     public static final int sleepTime = 10;
-    public static final int philosopherAmount = 30;
-    public static final int hungryPhilosopherAmount = 5;
-    public static final int runTimeInSeconds = 60;
-    public static final int seatAmount = 4;
+    public static  int philosopherAmount = 30;
+    public static  int hungryPhilosopherAmount = 20;
+    public static final int runTimeInSeconds = 62;
+    public static  int seatAmount = 5;
     public static long endTime;
     public static boolean debugging = false;
     private static int[] seats;
@@ -143,6 +143,9 @@ public class Main {
         int newHungryPhilosopherAmount =  hungryPhilosopherAmount - amountHungryPhilosophers;
         int newPhilosopherAmount =  philosopherAmount - amountNormalPhilosophers;
 
+        hungryPhilosopherAmount = newHungryPhilosopherAmount;
+        philosopherAmount = newPhilosopherAmount;
+
         int[] newHungryPhilosopher = getResultPerClient(newHungryPhilosopherAmount);
         int[] newPhilosopher = getResultPerClient(newPhilosopherAmount);
 
@@ -166,6 +169,9 @@ public class Main {
         int newHungryPhilosopherAmount = amountHungryPhilosophers + hungryPhilosopherAmount;
         int newPhilosopherAmount = amountNormalPhilosophers + philosopherAmount;
 
+        hungryPhilosopherAmount = newHungryPhilosopherAmount;
+        philosopherAmount = newPhilosopherAmount;
+
         int[] newHungryPhilosopher = getResultPerClient(newHungryPhilosopherAmount);
         int[] newPhilosopher = getResultPerClient(newPhilosopherAmount);
 
@@ -186,6 +192,7 @@ public class Main {
         int amountSeats = Integer.valueOf(seat);
 
         int newAmount = seatAmount + amountSeats;
+        seatAmount = newAmount;
         int[] newSeats = getResultPerClient(newAmount);
         for(int i = 0; i < seats.length; i++){
             int diff = newSeats[i] - seats[i];
@@ -203,6 +210,7 @@ public class Main {
         int amountSeats = Integer.valueOf(seat);
 
         int newAmount = seatAmount - amountSeats;
+        seatAmount = newAmount;
         int[] newSeats = getResultPerClient(newAmount);
         for(int i = 0; i < seats.length; i++){
             int diff = seats[i] - newSeats[i];
